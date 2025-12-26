@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Unlock Content | Studio Litex</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg:#0d0d0f;
+  --card:#16161a;
+  --accent:#00e676;
+  --accent2:#2196f3;
+  --text:#eaeaea;
+  --muted:#9e9e9e;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: radial-gradient(circle at top, #1a1a22, #000);
+  color:var(--text);
+}
+
+.container{
+  max-width:480px;
+  margin:auto;
+  padding:20px;
+}
+
+.card{
+  background:rgba(22,22,26,.95);
+  backdrop-filter: blur(10px);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 10px 40px rgba(0,0,0,.5);
+  animation:fade .4s ease;
+}
+
+@keyframes fade{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:none}
+}
+
+h2{
+  text-align:center;
+  margin-top:0;
+}
+
+.task{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:15px 0;
+}
+
+.task a{
+  color:var(--accent);
+  text-decoration:none;
+  font-weight:600;
+}
+
+.task input{
+  width:20px;
+  height:20px;
+}
+
+.btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:600;
+  background:#444;
+  color:#fff;
+  transition:.3s;
+}
+
+.btn.active{
+  background:linear-gradient(135deg,var(--accent),#00c853);
+}
+
+.btn.owner{
+  background:linear-gradient(135deg,var(--accent2),#1565c0);
+  margin-top:10px;
+}
+
+.hidden{display:none}
+
+.code-box{
+  background:#000;
+  border-radius:12px;
+  padding:15px;
+  max-height:220px;
+  overflow:auto;
+  font-family:monospace;
+  font-size:14px;
+  white-space:pre-wrap;
+}
+
+.flex{
+  display:flex;
+  gap:10px;
+}
+
+input,textarea{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:none;
+  background:#0d0d12;
+  color:#fff;
+  font-size:15px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- HOME -->
+<div class="card" id="home">
+<h2>🔓 Unlock Content</h2>
+
+<div class="task">
+<input type="checkbox" class="check">
+<a href="https://youtube.com/@studiolitex?si=MCnXv2F_28kNydBa" target="_blank">
+Subscribe Channel YouTube
+</a>
+</div>
+
+<div class="task">
+<input type="checkbox" class="check">
+<a href="https://youtube.com/@studiolitex?si=MCnXv2F_28kNydBa" target="_blank">
+Nyalakan Lonceng 🔔
+</a>
+</div>
+
+<div class="task">
+<input type="checkbox" class="check">
+<a href="https://whatsapp.com/channel/0029VbBYwjv5PO0vb1djh00N" target="_blank">
+Gabung Saluran WhatsApp
+</a>
+</div>
+
+<button id="lanjut" class="btn" disabled>Lanjut</button>
+<button class="btn owner" onclick="openOwner()">Owner</button>
+</div>
+
+<!-- CODE -->
+<div class="card hidden" id="codePage">
+<h2>📜 Code</h2>
+<div class="code-box" id="codeText">
+print("Terima kasih sudah support Studio Litex!")
+</div>
+<div class="flex">
+<button class="btn active" onclick="copyCode()">Copy</button>
+<button class="btn active" onclick="downloadCode()">Download</button>
+</div>
+</div>
+
+<!-- OWNER LOGIN -->
+<div class="card hidden" id="ownerLogin">
+<h2>🔑 Owner Login</h2>
+<input type="password" id="pw" placeholder="Password owner">
+<button class="btn active" onclick="checkPW()">Masuk</button>
+</div>
+
+<!-- OWNER PANEL -->
+<div class="card hidden" id="ownerPanel">
+<h2>⚙️ Owner Panel</h2>
+<textarea id="ownerCode" rows="8" placeholder="Paste / edit code"></textarea>
+<button class="btn active" onclick="saveOwner()">Simpan & Lanjut</button>
+</div>
+
+</div>
+
+<script>
+const checks=document.querySelectorAll(".check");
+const lanjut=document.getElementById("lanjut");
+const codeText=document.getElementById("codeText");
+
+checks.forEach(c=>{
+  c.onchange=()=>{
+    let ok=[...checks].every(x=>x.checked);
+    lanjut.disabled=!ok;
+    lanjut.classList.toggle("active",ok);
+  }
+});
+
+lanjut.onclick=()=>{
+  home.classList.add("hidden");
+  codePage.classList.remove("hidden");
+};
+
+function copyCode(){
+  navigator.clipboard.writeText(codeText.innerText);
+  alert("Code di copy!");
+}
+
+function downloadCode(){
+  let b=new Blob([codeText.innerText],{type:"text/plain"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(b);
+  a.download="code.txt";
+  a.click();
+}
+
+function openOwner(){
+  home.classList.add("hidden");
+  ownerLogin.classList.remove("hidden");
+}
+
+function checkPW(){
+  if(pw.value==="VALZZ123"){
+    ownerLogin.classList.add("hidden");
+    ownerPanel.classList.remove("hidden");
+  }else alert("Password salah!");
+}
+
+function saveOwner(){
+  codeText.innerText=ownerCode.value||"Code kosong";
+  ownerPanel.classList.add("hidden");
+  home.classList.remove("hidden");
+  checks.forEach(c=>c.checked=false);
+  lanjut.disabled=true;
+  lanjut.classList.remove("active");
+}
+</script>
+
+</body>
+</html>
