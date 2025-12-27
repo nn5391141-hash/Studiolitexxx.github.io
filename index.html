@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Unlock Content | Studio Litex</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{
+  --bg:#0d0d0f;
+  --card:#16161a;
+  --accent:#00e676;
+  --accent2:#2196f3;
+  --text:#eaeaea;
+  --muted:#9e9e9e;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:'Segoe UI', system-ui, sans-serif;
+  background: radial-gradient(circle at top, #1a1a22, #000);
+  color:var(--text);
+}
+.container{
+  max-width:480px;
+  margin:auto;
+  padding:20px;
+}
+.card{
+  background:rgba(22,22,26,.95);
+  backdrop-filter: blur(10px);
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 10px 40px rgba(0,0,0,.5);
+  animation:fade .4s ease;
+}
+@keyframes fade{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:none}
+}
+h2{text-align:center;margin-top:0}
+.btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  font-size:16px;
+  font-weight:600;
+  background:#444;
+  color:#fff;
+  transition:.3s;
+  margin-top:10px;
+  cursor:pointer;
+}
+.btn.active{background:linear-gradient(135deg,var(--accent),#00c853);}
+.btn.owner{background:linear-gradient(135deg,var(--accent2),#1565c0);}
+.hidden{display:none}
+.code-box{
+  background:#000;
+  border-radius:12px;
+  padding:15px;
+  max-height:220px;
+  overflow:auto;
+  font-family:monospace;
+  font-size:14px;
+  white-space:pre-wrap;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<!-- HOME -->
+<div class="card" id="home">
+<h2>🔓 Unlock Content</h2>
+<p style="text-align:center;color:var(--muted)">Klik tombol untuk support Studio Litex</p>
+
+<button id="subBtn" class="btn" onclick="openLink('sub')">Subscribe Channel</button>
+<p id="subStatus" style="text-align:center;color:var(--muted)"></p>
+
+<button id="bellBtn" class="btn" onclick="openLink('bell')">Nyalakan Lonceng 🔔</button>
+<p id="bellStatus" style="text-align:center;color:var(--muted)"></p>
+
+<button id="waBtn" class="btn" onclick="openLink('wa')">Gabung Saluran WhatsApp</button>
+<p id="waStatus" style="text-align:center;color:var(--muted)"></p>
+
+<button id="lanjut" class="btn" disabled>Lanjut</button>
+<button class="btn owner" onclick="openOwner()">Owner</button>
+</div>
+
+<!-- CODE PAGE -->
+<div class="card hidden" id="codePage">
+<h2>📜 Code</h2>
+<div class="code-box" id="codeText">
+print("Terima kasih sudah support Studio Litex!")
+</div>
+<div style="display:flex;gap:10px;margin-top:10px;">
+<button class="btn active" onclick="copyCode()">Copy</button>
+<button class="btn active" onclick="downloadCode()">Download</button>
+</div>
+</div>
+
+<!-- OWNER LOGIN -->
+<div class="card hidden" id="ownerLogin">
+<h2>🔑 Owner Login</h2>
+<input type="password" id="pw" placeholder="Masukkan Password">
+<button class="btn active" onclick="checkPW()">Masuk</button>
+</div>
+
+<!-- OWNER PANEL -->
+<div class="card hidden" id="ownerPanel">
+<h2>⚙️ Owner Panel</h2>
+<textarea id="ownerCode" rows="8" placeholder="Paste / edit code di sini"></textarea>
+<button class="btn active" onclick="saveOwner()">Simpan & Lanjut</button>
+</div>
+
+</div>
+
+<script>
+// STATUS TOMBOL
+let doneSub=false, doneBell=false, doneWA=false;
+
+const links = {
+  sub: "https://youtube.com/@studiolitex?si=MCnXv2F_28kNydBa",
+  bell: "https://youtube.com/@studiolitex?si=MCnXv2F_28kNydBa",
+  wa: "https://whatsapp.com/channel/0029VbBYwjv5PO0vb1djh00N"
+};
+
+function startWait(btn, status, doneFlag){
+  status.innerText="Menunggu kamu kembali...";
+  function onBack(){
+    if(!document.hidden && !doneFlag()){
+      status.innerText="Memverifikasi...";
+      setTimeout(()=>{
+        btn.classList.add("active");
+        btn.innerText+=" ✅";
+        status.innerText="Selesai";
+        doneFlag(true);
+        document.removeEventListener("visibilitychange", onBack);
+        checkAllDone();
+      },5000);
+    }
+  }
+  document.addEventListener("visibilitychange", onBack);
+}
+
+function openLink(type){
+  if(type==='sub' && doneSub) return;
+  if(type==='bell' && doneBell) return;
+  if(type==='wa' && doneWA) return;
+
+  let btn,status,doneFlag;
+  if(type==='sub'){ btn=subBtn; status=subStatus; doneFlag=(v)=>{if(v!==undefined) doneSub=v; return doneSub;} }
+  if(type==='bell'){ btn=bellBtn; status=bellStatus; doneFlag=(v)=>{if(v!==undefined) doneBell=v; return doneBell;} }
+  if(type==='wa'){ btn=waBtn; status=waStatus; doneFlag=(v)=>{if(v!==undefined) doneWA=v; return doneWA;} }
+
+  window.open(links[type],"_blank");
+  startWait(btn,status,doneFlag);
+}
+
+function checkAllDone(){
+  if(doneSub && doneBell && doneWA){
+    lanjut.disabled=false;
+    lanjut.classList.add("active");
+  }
+}
+
+// LANJUT
+lanjut.onclick=()=>{
+  home.classList.add("hidden");
+  codePage.classList.remove("hidden");
+};
+
+// COPY & DOWNLOAD CODE
+function copyCode(){
+  navigator.clipboard.writeText(codeText.innerText);
+  alert("Code berhasil di copy!");
+}
+function downloadCode(){
+  const blob=new Blob([codeText.innerText],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="code.txt";
+  a.click();
+}
+
+// OWNER
+function openOwner(){
+  home.classList.add("hidden");
+  ownerLogin.classList.remove("hidden");
+}
+function checkPW(){
+  const pw=document.getElementById("pw").value;
+  if(pw==="VALZZ123"){
+    ownerLogin.classList.add("hidden");
+    ownerPanel.classList.remove("hidden");
+  }else alert("Password salah!");
+}
+function saveOwner(){
+  codeText.innerText=document.getElementById("ownerCode").value || "Code kosong";
+  ownerPanel.classList.add("hidden");
+  home.classList.remove("hidden");
+  doneSub=doneBell=doneWA=false;
+  lanjut.disabled=true;
+  lanjut.classList.remove("active");
+  subBtn.innerText="Subscribe Channel";
+  bellBtn.innerText="Nyalakan Lonceng 🔔";
+  waBtn.innerText="Gabung Saluran WhatsApp";
+  subBtn.classList.remove("active");
+  bellBtn.classList.remove("active");
+  waBtn.classList.remove("active");
+  subStatus.textContent="";
+  bellStatus.textContent="";
+  waStatus.textContent="";
+}
+</script>
+
+</body>
+</html>
